@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mstore</title>
+  <style>
+    /* --- CSS (style.css) --- */
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background-color: #000000;
+    }
+
+    header {
+      background-color: #0a74da;
+      color: white;
+      padding: 20px 0;
+    }
+
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    header input {
+      padding: 10px;
+      width: 300px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 40px 20px;
+    }
+
+    .product-card {
+      background-color: white;
+      border-radius: 12px;
+      width: 250px;
+      padding: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .product-card img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .product-card h2 {
+      font-size: 18px;
+      margin: 10px 0 5px;
+    }
+
+    .product-card p {
+      font-size: 16px;
+      color: #444;
+      margin: 5px 0;
+    }
+
+    .product-card button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #0a74da;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .product-card button:hover {
+      background-color: #005bb5;
+    }
+
+    /* Модальное окно */
+    .modal {
+      display: none; /* Скрыто по умолчанию */
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.6);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      text-align: center;
+      position: relative;
+    }
+
+    .close {
+      color: #aaa;
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #000;
+    }
+
+    .modal-content button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #03ffa7;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .modal-content button:hover {
+      background-color: #005bb5;
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Mstore</h1>
+      <input type="text" placeholder="🔍 Поиск товаров..." />
+    </div>
+  </header>
+
+  <main class="products">
+    <div class="product-card">
+      <img src="Изображение WhatsApp 2025-05-21 в 16.44.24_53285851.jpg" alt="AirPods Pro 3" />
+      <h2>AirPods Pro 3 с сенсорным экраном </h2>
+      <p>Цена: 80 сомони</p>
+      <button class="buy-btn" data-modal="modal-airpods">Купить</button>
+    </div>
+
+    <div class="product-card">
+      <img src="Изображение WhatsApp 2025-05-21 в 16.44.25_7d28f6d4.jpg" alt="Набор гаджетов Apple" />
+      <h2>Набор гаджетов Apple</h2>
+      <p>Цена: 200 сомони</p>
+      <button class="buy-btn" data-modal="modal-gadgets">Купить</button>
+    </div>
+
+    <!-- Добавь новые товары сюда -->
+  </main>
+
+  <!-- Модальные окна -->
+
+  <div id="modal-airpods" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>AirPods Pro 3</h2>
+      <p>Беспроводные наушники с сенсорным экраном</p>
+      <p>Доставка: нет</p>
+      <button>Оформить заказ</button>
+       <p>контакты:93 111 1111</p>
+    </div>
+  </div>
+
+  <div id="modal-gadgets" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Набор гаджетов Apple</h2>
+      <p>Включает в себя: Airpods, Apple Watch, Magsafe, 2 беспроводных зарядника и одна проводная</p>
+      <p>Доставка: сами придете и заберете</p>
+      <button>Оформить заказ</button>
+      <p>контакты:93 111 1111</p>
+    </div>
+  </div>
+
+  <script>
+    const buyButtons = document.querySelectorAll(".buy-btn");
+    const modalCloseBtns = document.querySelectorAll(".modal .close");
+
+    buyButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        const modalId = button.getAttribute("data-modal");
+        const modal = document.getElementById(modalId);
+        if (modal) {
+          modal.style.display = "block";
+        }
+      });
+    });
+
+    modalCloseBtns.forEach(closeBtn => {
+      closeBtn.addEventListener("click", () => {
+        closeBtn.closest(".modal").style.display = "none";
+      });
+    });
+
+    window.addEventListener("click", (event) => {
+      if (event.target.classList.contains("modal")) {
+        event.target.style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html>
