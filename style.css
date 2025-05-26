@@ -1,136 +1,92 @@
 body {
-    font-family: 'Segoe UI', sans-serif;
-    margin: 0;
-    background-color: #f4f4f4;
-  }
-  
-  header {
-    background-color: #0a74da;
-    color: white;
-    padding: 20px 0;
-  }
-  
-  header .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-  }
-  
-  header h1 {
-    margin: 0;
-    font-size: 28px;
-  }
-  
-  header input {
-    padding: 10px;
-    width: 300px;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-  }
-  
-  .products {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-    padding: 40px 20px;
-  }
-  
-  .product-card {
-    background-color: white;
-    border-radius: 12px;
-    width: 250px;
-    padding: 15px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    text-align: center;
-    transition: transform 0.2s;
-  }
-  
-  .product-card:hover {
-    transform: translateY(-5px);
-  }
-  
-  .product-card img {
-    width: 100%;
-    border-radius: 8px;
-  }
-  
-  .product-card h2 {
-    font-size: 18px;
-    margin: 10px 0 5px;
-  }
-  
-  .product-card p {
-    font-size: 16px;
-    color: #444;
-    margin: 5px 0;
-  }
-  
-  .product-card button {
-    margin-top: 10px;
-    padding: 10px 20px;
-    background-color: #0a74da;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  
-  .product-card button:hover {
-    background-color: #005bb5;
-  }
-  .modal {
-    display: none; /* Скрыто по умолчанию */
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.6);
-  }
-  
-  .modal-content {
-    background-color: #fff;
-    margin: 10% auto;
-    padding: 30px;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-    text-align: center;
-  }
-  
-  .close {
-    color: #aaa;
-    float: right;
-    font-size: 24px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .close:hover {
-    color: #000;
-  }
-  
-  .modal-content button {
-    margin-top: 15px;
-    padding: 10px 20px;
-    background-color: #0a74da;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  
-  .modal-content button:hover {
-    background-color: #005bb5;
-  }
-  
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f5f5f5;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #222;
+  color: white;
+  padding: 1rem;
+}
+
+header h1 {
+  margin: 0;
+}
+
+header input[type="text"] {
+  padding: 0.5rem;
+  width: 200px;
+}
+
+header button {
+  margin-left: 0.5rem;
+  padding: 0.5rem;
+  background: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.products {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+  justify-content: center;
+}
+
+.product-card {
+  background: white;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  width: 200px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.product-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+#adminPanel {
+  display: none;
+  margin: 1rem;
+  padding: 1rem;
+  background: #fffbe6;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
+.modal, .modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+}
+
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+.modal {
+  background: white;
+  width: 300px;
+  padding: 2rem;
+  border-radius: 10px;
+  z-index: 20;
+  margin: auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: fixed;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+}
