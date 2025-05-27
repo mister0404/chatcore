@@ -2,36 +2,158 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mstore</title>
-  <link rel="stylesheet" href="style.css">
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-    header { display: flex; flex-direction: column; align-items: center; padding: 1rem; background: #222; color: white; }
-    header h1 { margin: 0; }
-    header input[type="text"] { padding: 0.5rem; width: 90%; max-width: 300px; margin-top: 1rem; }
-    .products { display: flex; flex-wrap: wrap; gap: 1rem; padding: 1rem; justify-content: center; }
-    .product-card { border: 1px solid #ccc; border-radius: 8px; padding: 1rem; width: 90%; max-width: 200px; text-align: center; background: #fff; }
-    .admin-controls { margin-top: 1rem; }
-    #adminPanel { display: none; margin: 1rem; padding: 1rem; background: #f3f3f3; border: 1px solid #ccc; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f9f9f9;
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      background: #222;
+      color: white;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    header input[type="text"] {
+      padding: 0.7rem;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 5px;
+      border: none;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    header button {
+      margin: 0.25rem;
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      background-color: #3a86ff;
+      color: white;
+      cursor: pointer;
+    }
+
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 10px;
+      padding: 1rem;
+      width: 90%;
+      max-width: 300px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .product-card img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .product-card h2 {
+      font-size: 1.2rem;
+      margin: 0.5rem 0;
+    }
+
+    .product-card p {
+      font-size: 1rem;
+      margin: 0.3rem 0;
+    }
+
+    .product-card button {
+      margin: 0.2rem;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .buy-btn {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .edit-btn {
+      background-color: #ffc107;
+      color: black;
+      display: none; /* Показывается только админу */
+    }
+
     .modal, .modal-overlay {
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
     }
+
     .modal-overlay {
       background: rgba(0,0,0,0.5);
+      z-index: 9;
     }
+
     .modal {
+      z-index: 10;
       background: white;
       width: 90%;
-      max-width: 300px;
+      max-width: 400px;
       margin: auto;
       padding: 2rem;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      position: fixed;
+    }
+
+    .modal input {
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.7rem;
+      font-size: 1rem;
+    }
+
+    .modal button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      margin-right: 0.5rem;
+    }
+
+    #adminPanel {
+      display: none;
+      padding: 1rem;
+      text-align: center;
+      background: #eef;
+    }
+
+    @media (min-width: 600px) {
+      header {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      header input[type="text"] {
+        margin-bottom: 0;
+      }
     }
   </style>
 </head>
@@ -46,65 +168,67 @@
   </header>
 
   <main class="products">
-    <div class="product-card">
-      <img src="airpods.jpg" alt="AirPods" style="width: 100%;">
+    <div class="product-card" id="product-airpods">
+      <img src="airpods.jpg" alt="AirPods">
       <h2 id="title-airpods">AirPods Pro 3</h2>
-      <p id="desc-airpods">Беспроводные наушники с активным шумоподавлением и отличным качеством звука.</p>
-      <p id="price-airpods">Цена: 80 сомон</p>
-      <button onclick="openProductModal('airpods')">Купить</button>
-      <button class="edit-btn" style="display: none;" onclick="editProduct('airpods')">Редактировать</button>
+      <p id="desc-airpods">Беспроводные наушники с шумоподавлением</p>
+      <p id="price-airpods">80 сомон</p>
+      <button class="buy-btn" onclick="openProductModal('airpods')">Купить</button>
+      <button class="edit-btn" onclick="editProduct('airpods')">Редактировать</button>
     </div>
-    <div class="product-card">
-      <img src="apple-kit.jpg" alt="Apple Set" style="width: 100%;">
+
+    <div class="product-card" id="product-kit">
+      <img src="apple-kit.jpg" alt="Apple Kit">
       <h2 id="title-kit">Набор гаджетов Apple</h2>
-      <p id="desc-kit">Комплект: часы, наушники и кабели Apple — отличное решение для подарка.</p>
-      <p id="price-kit">Цена: 200 сомон</p>
-      <button onclick="openProductModal('kit')">Купить</button>
-      <button class="edit-btn" style="display: none;" onclick="editProduct('kit')">Редактировать</button>
+      <p id="desc-kit">Часы, наушники, зарядка</p>
+      <p id="price-kit">200 сомон</p>
+      <button class="buy-btn" onclick="openProductModal('kit')">Купить</button>
+      <button class="edit-btn" onclick="editProduct('kit')">Редактировать</button>
     </div>
   </main>
 
   <div id="adminPanel">
     <h2>Панель администратора</h2>
-    <p>Здесь ты можешь редактировать товары.</p>
+    <p>Здесь можно редактировать товары</p>
   </div>
 
   <!-- Модальные окна -->
-  <div class="modal-overlay" id="registerOverlay"></div>
-  <div id="registerModal" class="modal">
-    <h2>Регистрация</h2>
-    <input type="text" placeholder="Ваше имя"><br><br>
-    <input type="email" placeholder="Ваш email"><br><br>
-    <button onclick="closeRegisterModal()">Зарегистрироваться</button>
-  </div>
-
   <div class="modal-overlay" id="adminOverlay"></div>
-  <div id="adminModal" class="modal">
+  <div class="modal" id="adminModal">
     <h2>Вход администратора</h2>
-    <input type="password" id="adminPassword" placeholder="Введите пароль"><br><br>
+    <input type="password" id="adminPassword" placeholder="Введите пароль">
     <button onclick="checkAdminPassword()">Войти</button>
   </div>
 
+  <div class="modal-overlay" id="registerOverlay"></div>
+  <div class="modal" id="registerModal">
+    <h2>Регистрация</h2>
+    <input type="text" placeholder="Имя">
+    <input type="email" placeholder="Email">
+    <button onclick="closeRegisterModal()">Зарегистрироваться</button>
+  </div>
+
   <div class="modal-overlay" id="productOverlay"></div>
-  <div id="productModal" class="modal">
+  <div class="modal" id="productModal">
     <h2 id="productTitle">Товар</h2>
-    <p id="productDesc">Описание товара</p>
-    <p id="productPrice"></p>
+    <p id="productDesc">Описание</p>
+    <p id="productPrice">Цена</p>
     <button onclick="closeProductModal()">Закрыть</button>
   </div>
 
   <div class="modal-overlay" id="editOverlay"></div>
-  <div id="editModal" class="modal">
+  <div class="modal" id="editModal">
     <h2>Редактировать товар</h2>
-    <input type="text" id="editTitle" placeholder="Название"><br><br>
-    <input type="text" id="editDesc" placeholder="Описание"><br><br>
-    <input type="text" id="editPrice" placeholder="Цена"><br><br>
-    <button onclick="saveProductEdit()">Сохранить</button>
+    <input type="text" id="editTitle" placeholder="Название">
+    <input type="text" id="editDesc" placeholder="Описание">
+    <input type="text" id="editPrice" placeholder="Цена">
+    <button onclick="saveEdit()">Сохранить</button>
+    <button onclick="closeEditModal()">Отмена</button>
   </div>
 
   <script>
     const ADMIN_PASSWORD = "1234";
-    let currentEditing = null;
+    let currentProduct = "";
 
     function openRegisterModal() {
       document.getElementById('registerOverlay').style.display = 'block';
@@ -122,8 +246,8 @@
     }
 
     function checkAdminPassword() {
-      const entered = document.getElementById('adminPassword').value;
-      if (entered === ADMIN_PASSWORD) {
+      const pass = document.getElementById('adminPassword').value;
+      if (pass === ADMIN_PASSWORD) {
         alert("Добро пожаловать, админ!");
         document.getElementById('adminPanel').style.display = 'block';
         document.querySelectorAll('.edit-btn').forEach(btn => btn.style.display = 'inline-block');
@@ -134,10 +258,11 @@
       document.getElementById('adminModal').style.display = 'none';
     }
 
-    function openProductModal(product) {
-      document.getElementById('productTitle').textContent = document.getElementById(`title-${product}`).textContent;
-      document.getElementById('productDesc').textContent = document.getElementById(`desc-${product}`).textContent;
-      document.getElementById('productPrice').textContent = document.getElementById(`price-${product}`).textContent;
+    function openProductModal(id) {
+      document.getElementById('productTitle').textContent = document.getElementById('title-' + id).textContent;
+      document.getElementById('productDesc').textContent = document.getElementById('desc-' + id).textContent;
+      document.getElementById('productPrice').textContent = document.getElementById('price-' + id).textContent;
+
       document.getElementById('productOverlay').style.display = 'block';
       document.getElementById('productModal').style.display = 'block';
     }
@@ -147,19 +272,25 @@
       document.getElementById('productModal').style.display = 'none';
     }
 
-    function editProduct(product) {
-      currentEditing = product;
-      document.getElementById('editTitle').value = document.getElementById(`title-${product}`).textContent;
-      document.getElementById('editDesc').value = document.getElementById(`desc-${product}`).textContent;
-      document.getElementById('editPrice').value = document.getElementById(`price-${product}`).textContent.replace('Цена: ', '');
+    function editProduct(id) {
+      currentProduct = id;
+      document.getElementById('editTitle').value = document.getElementById('title-' + id).textContent;
+      document.getElementById('editDesc').value = document.getElementById('desc-' + id).textContent;
+      document.getElementById('editPrice').value = document.getElementById('price-' + id).textContent.replace(' сомон', '');
+
       document.getElementById('editOverlay').style.display = 'block';
       document.getElementById('editModal').style.display = 'block';
     }
 
-    function saveProductEdit() {
-      document.getElementById(`title-${currentEditing}`).textContent = document.getElementById('editTitle').value;
-      document.getElementById(`desc-${currentEditing}`).textContent = document.getElementById('editDesc').value;
-      document.getElementById(`price-${currentEditing}`).textContent = 'Цена: ' + document.getElementById('editPrice').value;
+    function saveEdit() {
+      document.getElementById('title-' + currentProduct).textContent = document.getElementById('editTitle').value;
+      document.getElementById('desc-' + currentProduct).textContent = document.getElementById('editDesc').value;
+      document.getElementById('price-' + currentProduct).textContent = document.getElementById('editPrice').value + ' сомон';
+
+      closeEditModal();
+    }
+
+    function closeEditModal() {
       document.getElementById('editOverlay').style.display = 'none';
       document.getElementById('editModal').style.display = 'none';
     }
