@@ -5,11 +5,12 @@
   <title>Mstore</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    body { font-family: Arial, sans-serif; }
-    header { display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #222; color: white; }
-    input[type="text"] { padding: 0.5rem; width: 200px; }
-    .products { display: flex; flex-wrap: wrap; gap: 1rem; padding: 1rem; }
-    .product-card { border: 1px solid #ccc; border-radius: 8px; padding: 1rem; width: 200px; text-align: center; }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    header { display: flex; flex-direction: column; align-items: center; padding: 1rem; background: #222; color: white; }
+    header h1 { margin: 0; }
+    header input[type="text"] { padding: 0.5rem; width: 90%; max-width: 300px; margin-top: 1rem; }
+    .products { display: flex; flex-wrap: wrap; gap: 1rem; padding: 1rem; justify-content: center; }
+    .product-card { border: 1px solid #ccc; border-radius: 8px; padding: 1rem; width: 90%; max-width: 200px; text-align: center; background: #fff; }
     .admin-controls { margin-top: 1rem; }
     #adminPanel { display: none; margin: 1rem; padding: 1rem; background: #f3f3f3; border: 1px solid #ccc; }
     .modal, .modal-overlay {
@@ -22,7 +23,8 @@
     }
     .modal {
       background: white;
-      width: 300px;
+      width: 90%;
+      max-width: 300px;
       margin: auto;
       padding: 2rem;
       box-shadow: 0 0 10px rgba(0,0,0,0.3);
@@ -44,28 +46,27 @@
   </header>
 
   <main class="products">
-    <div class="product-card" id="card-airpods">
+    <div class="product-card">
       <img src="airpods.jpg" alt="AirPods" style="width: 100%;">
       <h2 id="title-airpods">AirPods Pro 3</h2>
-      <p id="desc-airpods">Беспроводные наушники с шумоподавлением, совместимы с iOS и Android.</p>
+      <p id="desc-airpods">Беспроводные наушники с активным шумоподавлением и отличным качеством звука.</p>
       <p id="price-airpods">Цена: 80 сомон</p>
       <button onclick="openProductModal('airpods')">Купить</button>
-      <button class="edit-btn" style="display:none" onclick="editProduct('airpods')">Редактировать</button>
+      <button class="edit-btn" style="display: none;" onclick="editProduct('airpods')">Редактировать</button>
     </div>
-
-    <div class="product-card" id="card-kit">
+    <div class="product-card">
       <img src="apple-kit.jpg" alt="Apple Set" style="width: 100%;">
       <h2 id="title-kit">Набор гаджетов Apple</h2>
-      <p id="desc-kit">Часы, наушники, зарядка — полный комплект гаджетов Apple.</p>
+      <p id="desc-kit">Комплект: часы, наушники и кабели Apple — отличное решение для подарка.</p>
       <p id="price-kit">Цена: 200 сомон</p>
       <button onclick="openProductModal('kit')">Купить</button>
-      <button class="edit-btn" style="display:none" onclick="editProduct('kit')">Редактировать</button>
+      <button class="edit-btn" style="display: none;" onclick="editProduct('kit')">Редактировать</button>
     </div>
   </main>
 
   <div id="adminPanel">
     <h2>Панель администратора</h2>
-    <p>Ты можешь редактировать товары на странице.</p>
+    <p>Здесь ты можешь редактировать товары.</p>
   </div>
 
   <!-- Модальные окна -->
@@ -93,31 +94,17 @@
   </div>
 
   <div class="modal-overlay" id="editOverlay"></div>
-  <div class="modal" id="editModal">
+  <div id="editModal" class="modal">
     <h2>Редактировать товар</h2>
     <input type="text" id="editTitle" placeholder="Название"><br><br>
     <input type="text" id="editDesc" placeholder="Описание"><br><br>
     <input type="text" id="editPrice" placeholder="Цена"><br><br>
-    <button onclick="saveEdit()">Сохранить</button>
-    <button onclick="closeEditModal()">Отмена</button>
+    <button onclick="saveProductEdit()">Сохранить</button>
   </div>
 
   <script>
-    const ADMIN_PASSWORD = "1234pamir";
-    let currentProduct = "";
-
-    const productsData = {
-      airpods: {
-        title: "AirPods Pro 3",
-        desc: "Беспроводные наушники с шумоподавлением, совместимы с iOS и Android.",
-        price: "80 сомон"
-      },
-      kit: {
-        title: "Набор гаджетов Apple",
-        desc: "Часы, наушники, зарядка — полный комплект гаджетов Apple.",
-        price: "200 сомон"
-      }
-    };
+    const ADMIN_PASSWORD = "1234";
+    let currentEditing = null;
 
     function openRegisterModal() {
       document.getElementById('registerOverlay').style.display = 'block';
@@ -148,10 +135,9 @@
     }
 
     function openProductModal(product) {
-      const data = productsData[product];
-      document.getElementById('productTitle').textContent = data.title;
-      document.getElementById('productDesc').textContent = data.desc;
-      document.getElementById('productPrice').textContent = 'Цена: ' + data.price;
+      document.getElementById('productTitle').textContent = document.getElementById(`title-${product}`).textContent;
+      document.getElementById('productDesc').textContent = document.getElementById(`desc-${product}`).textContent;
+      document.getElementById('productPrice').textContent = document.getElementById(`price-${product}`).textContent;
       document.getElementById('productOverlay').style.display = 'block';
       document.getElementById('productModal').style.display = 'block';
     }
@@ -162,34 +148,20 @@
     }
 
     function editProduct(product) {
-      currentProduct = product;
-      const data = productsData[product];
-      document.getElementById('editTitle').value = data.title;
-      document.getElementById('editDesc').value = data.desc;
-      document.getElementById('editPrice').value = data.price;
+      currentEditing = product;
+      document.getElementById('editTitle').value = document.getElementById(`title-${product}`).textContent;
+      document.getElementById('editDesc').value = document.getElementById(`desc-${product}`).textContent;
+      document.getElementById('editPrice').value = document.getElementById(`price-${product}`).textContent.replace('Цена: ', '');
       document.getElementById('editOverlay').style.display = 'block';
       document.getElementById('editModal').style.display = 'block';
     }
 
-    function closeEditModal() {
+    function saveProductEdit() {
+      document.getElementById(`title-${currentEditing}`).textContent = document.getElementById('editTitle').value;
+      document.getElementById(`desc-${currentEditing}`).textContent = document.getElementById('editDesc').value;
+      document.getElementById(`price-${currentEditing}`).textContent = 'Цена: ' + document.getElementById('editPrice').value;
       document.getElementById('editOverlay').style.display = 'none';
       document.getElementById('editModal').style.display = 'none';
-    }
-
-    function saveEdit() {
-      const title = document.getElementById('editTitle').value;
-      const desc = document.getElementById('editDesc').value;
-      const price = document.getElementById('editPrice').value;
-
-      productsData[currentProduct].title = title;
-      productsData[currentProduct].desc = desc;
-      productsData[currentProduct].price = price;
-
-      document.getElementById('title-' + currentProduct).textContent = title;
-      document.getElementById('desc-' + currentProduct).textContent = desc;
-      document.getElementById('price-' + currentProduct).textContent = 'Цена: ' + price;
-
-      closeEditModal();
     }
   </script>
 </body>
