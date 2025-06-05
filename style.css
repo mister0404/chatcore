@@ -1,137 +1,38 @@
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background-color: #f2f2f2;
+const db = firebase.database();
+let userRole = "user"; // по умолчанию
+
+function setUserRole(role) {
+  userRole = role;
+  alert("Вы вошли как: " + (role === "admin" ? "Админ" : "Пользователь"));
 }
 
-header {
-  background-color: #333;
-  color: white;
-  padding: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+// Отправка сообщения
+function sendMessage() {
+  const input = document.getElementById("messageInput");
+  const text = input.value.trim();
+  if (text === "") return;
+
+  const message = {
+    sender: userRole,
+    text: text,
+    timestamp: Date.now()
+  };
+
+  db.ref("messages").push(message);
+  input.value = "";
 }
 
-header input {
-  padding: 8px;
-  width: 300px;
-}
+// Получение сообщений
+db.ref("messages").on("child_added", (snapshot) => {
+  const msg = snapshot.val();
+  displayMessage(msg);
+});
 
-.header-buttons button {
-  margin-left: 10px;
-  padding: 8px 12px;
-  background: #0077ff;
-  border: none;
-  color: white;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.products {
-  display: flex;
-  justify-content: space-around;
-  padding: 20px;
-  flex-wrap: wrap;
-}
-
-.product-card {
-  background-color: white;
-  border-radius: 10px;
-  padding: 20px;
-  width: 250px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  margin: 10px;
-}
-
-.product-card img {
-  max-width: 100%;
-  border-radius: 10px;
-}
-
-.product-card button {
-  margin-top: 10px;
-  padding: 8px 12px;
-  background: #28a745;
-  border: none;
-  color: white;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.edit-btn {
-  background-color: #ffc107;
-  display: none;
-  margin-left: 5px;
-}
-
-.hidden {
-  display: none;
-}
-
-.modal {
-  position: fixed;
-  background-color: white;
-  padding: 20px;
-  width: 300px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10;
-  display: none;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
-  border-radius: 10px;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  background: rgba(0, 0, 0, 0.5);
-  width: 100%;
-  height: 100%;
-  display: none;
-  z-index: 5;
-}
-
-.messenger {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  background: white;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  box-shadow: -2px -2px 5px rgba(0,0,0,0.2);
-  width: 300px;
-  padding: 10px;
-}
-
-.chat-box {
-  height: 200px;
-  overflow-y: auto;
-  border: 1px solid #ccc;
-  margin-bottom: 10px;
-  padding: 5px;
-  background-color: #f9f9f9;
-}
-
-.chat-box p {
-  margin: 5px 0;
-  padding: 5px 10px;
-  border-radius: 10px;
-  background: #e1f0ff;
-}
-
-#userMessage {
-  width: calc(100% - 80px);
-  padding: 8px;
-}
-
-.messenger button {
-  width: 60px;
-  padding: 8px;
-  background: #0077ff;
-  color: white;
-  border: none;
-  border-radius: 5px;
+function displayMessage(msg) {
+  const container = document.getElementById("chatMessages");
+  const div = document.createElement("div");
+  div.classList.add("message", msg.sender);
+  div.textContent = (msg.sender === "admin" ? "Админ: " : "Пользователь: ") + msg.text;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
 }
