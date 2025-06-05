@@ -1,38 +1,88 @@
-const db = firebase.database();
-let userRole = "user"; // по умолчанию
-
-function setUserRole(role) {
-  userRole = role;
-  alert("Вы вошли как: " + (role === "admin" ? "Админ" : "Пользователь"));
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f5f5f5;
 }
 
-// Отправка сообщения
-function sendMessage() {
-  const input = document.getElementById("messageInput");
-  const text = input.value.trim();
-  if (text === "") return;
-
-  const message = {
-    sender: userRole,
-    text: text,
-    timestamp: Date.now()
-  };
-
-  db.ref("messages").push(message);
-  input.value = "";
+header {
+  background: #222;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
-// Получение сообщений
-db.ref("messages").on("child_added", (snapshot) => {
-  const msg = snapshot.val();
-  displayMessage(msg);
-});
+header h1 {
+  flex-grow: 1;
+  margin: 0;
+}
 
-function displayMessage(msg) {
-  const container = document.getElementById("chatMessages");
-  const div = document.createElement("div");
-  div.classList.add("message", msg.sender);
-  div.textContent = (msg.sender === "admin" ? "Админ: " : "Пользователь: ") + msg.text;
-  container.appendChild(div);
-  container.scrollTop = container.scrollHeight;
+button {
+  background: #007bff;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+.hidden {
+  display: none;
+}
+
+#chatArea {
+  max-width: 600px;
+  margin: 20px auto;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+}
+
+.chat-messages {
+  flex-grow: 1;
+  padding: 15px;
+  overflow-y: auto;
+  border-bottom: 1px solid #ddd;
+}
+
+.message {
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  border-radius: 15px;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+.message.user {
+  background: #d1e7dd;
+  align-self: flex-start;
+}
+
+.message.admin {
+  background: #bee5eb;
+  align-self: flex-end;
+  text-align: right;
+}
+
+#messageForm {
+  display: flex;
+  padding: 10px;
+  gap: 10px;
+}
+
+#messageInput {
+  flex-grow: 1;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 16px;
 }
