@@ -2,47 +2,28 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mstore Chat</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
   <header>
-    <h1>Mstore</h1>
-    <div class="header-buttons">
-      <button onclick="setUserRole('user')">Я пользователь</button>
-      <button onclick="setUserRole('admin')">Я админ</button>
-    </div>
+    <h1>Mstore Chat</h1>
+    <button id="btnUser">Я пользователь</button>
+    <button id="btnAdmin">Я админ</button>
   </header>
 
-  <main>
-    <div id="chat">
-      <div id="chatMessages"></div>
-      <div id="chatInput">
-        <input type="text" id="messageInput" placeholder="Напишите сообщение..." />
-        <button onclick="sendMessage()">Отправить</button>
-      </div>
-    </div>
+  <main id="chatArea" class="hidden">
+    <div id="chatMessages" class="chat-messages"></div>
+
+    <form id="messageForm">
+      <input type="text" id="messageInput" placeholder="Введите сообщение..." autocomplete="off" required />
+      <button type="submit">Отправить</button>
+    </form>
   </main>
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
-
-  <!-- Твой Firebase config -->
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDxp5XkvT0h9_vGv8jqxzUUyWay0Do7Nm0",
-      authDomain: "mstorechat-279a6.firebaseapp.com",
-      databaseURL: "https://mstorechat-279a6-default-rtdb.firebaseio.com",
-      projectId: "mstorechat-279a6",
-      storageBucket: "mstorechat-279a6.appspot.com",
-      messagingSenderId: "914998119302",
-      appId: "1:914998119302:web:e0369f5e43efa3c8c8ba07",
-      measurementId: "G-ZN1BGV7QY0"
-    };
-    firebase.initializeApp(firebaseConfig);
-  </script>
 
   <script src="script.js"></script>
 </body>
