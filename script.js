@@ -1,84 +1,106 @@
-// Конфиг Firebase — замени на свой из консоли Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyDxp5XkvT0h9_vGv8jqxzUUyWay0Do7Nm0",
-  authDomain: "mstorechat-279a6.firebaseapp.com",
-  databaseURL: "https://mstorechat-279a6-default-rtdb.firebaseio.com",
-  projectId: "mstorechat-279a6",
-  storageBucket: "mstorechat-279a6.appspot.com",
-  messagingSenderId: "914998119302",
-  appId: "1:914998119302:web:e0369f5e43efa3c8c8ba07",
-  measurementId: "G-ZN1BGV7QY0"
-};
+const map = L.map('map').setView([20, 0], 2);
 
-// Инициализация Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
 
-let role = ""; // 'user' или 'admin'
+const asteroidSelect = document.getElementById('asteroidSelect');
+const destructionRadiusInput = document.getElementById('destructionRadius');
+const fallBtn = document.getElementById('fallBtn');
 
-// Элементы DOM
-const btnUser = document.getElementById("btnUser");
-const btnAdmin = document.getElementById("btnAdmin");
-const chatArea = document.getElementById("chatArea");
-const chatMessages = document.getElementById("chatMessages");
-const messageForm = document.getElementById("messageForm");
-const messageInput = document.getElementById("messageInput");
+let fallPoint = null; // Точка падения на карте
 
-// Выбор роли пользователя
-btnUser.onclick = () => startChat("user");
-btnAdmin.onclick = () => startChat("admin");
+// Пример списка астероидов
+const asteroids = [
+    { id: 1, name: "Impactor-2025", size_km: 0.5, velocity_kms: 25, impact_energy_mt: 50 },
+    { id: 2, name: "Apophis", size_km: 0.37, velocity_kms: 30, impact_energy_mt: 30 },
+    { id: 3, name: "Bennu", size_km: 0.49, velocity_kms: 20, impact_energy_mt: 40 }
+];
 
-function startChat(selectedRole) {
-  role = selectedRole;
-  btnUser.style.display = "none";
-  btnAdmin.style.display = "none";
-  chatArea.classList.remove("hidden");
-  loadMessages();
-}
+// Заполняем селект
+asteroids.forEach(a => {
+    const option = document.createElement('option');
+    option.value = a.id;
+    option.textContent = `${a.name} (Размер: ${a.size_km} км, Скорость: ${a.velocity_kms} км/с)`;
+    asteroidSelect.appendChild(option);
+});
 
-// Загрузка и отображение сообщений из Firebase
-function loadMessages() {
-  const messagesRef = db.ref("messages");
+// Выбираем точку падения кликом
+map.on('click', e => {
+    fallPoint = e.latlng;
+    if (window.fallMarker) map.removeLayer(window.fallMarker);
+    window.fallMarker = L.marker(fallPoint).addTo(map)
+        .bindPopup("Точка падения выбрана").openPopup();
+});
 
-  messagesRef.off(); // отключаем старые слушатели если есть
+// Обработчик кнопки
+fallBtn.addEventListener('click', () => {
+    const asteroidId = parseInt(asteroidSelect.value);
+    const asteroid = asteroids.find(a => a.id === asteroidId);
 
-  messagesRef.on("child_added", snapshot => {
-    const msg = snapshot.val();
-    displayMessage(msg);
-  });
+    if (!asteroid) {
+        alert("Выберите астероид!");
+        return;
+    }
 
-  // Автоскролл вниз
-  messagesRef.on("value", () => {
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  });
-}
+    if (!fallPoint) {
+        alert("Выберите точку падения на карте!");
+        return;
+    }
 
-// Вывод сообщения в чат
-function displayMessage(msg) {
-  const div = document.createElement("div");
-  div.classList.add("message");
-  div.classList.add(msg.sender === "admin" ? "admin" : "user");
-  div.textContent = msg.text;
-  chatMessages.appendChild(div);
-}
+    const radius = parseFloat(destructionRadiusInput.value) * 1000; // в метры
 
-// Отправка сообщения
-messageForm.onsubmit = (e) => {
-  e.preventDefault();
-  const text = messageInput.value.trim();
-  if (!text) return;
+    // Начальные координаты астероида (сверху карты)
+    const start = [fallPoint.lat + 10, fallPoint.lng];
+    const end = [fallPoint.lat, fallPoint.lng];
+    let step = 0;
+    const steps = 50;
 
-  const newMsg = {
-    sender: role,
-    text,
-    timestamp: Date.now()
-  };
+    const marker = L.marker(start, {
+        icon: L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/616/616408.png',
+            iconSize: [40, 40]
+        })
+    }).addTo(map);
 
-  db.ref("messages").push(newMsg)
-    .then(() => {
-      messageInput.value = "";
-    })
-    .catch(err => {
-      alert("Ошибка при отправке: " + err.message);
-    });
-};
+    const interval = setInterval(() => {
+        step++;
+        const curLat = start[0] + ((end[0] - start[0]) * step) / steps;
+        const curLng = start[1] + ((end[1] - start[1]) * step) / steps;
+        marker.setLatLng([curLat, curLng]);
+
+        if (step >= steps) {
+            clearInterval(interval);
+            map.removeLayer(marker);
+
+            // Взрыв: создаём круг зоны разрушений
+            L.circle(end, {
+                radius: radius,
+                color: 'red',
+                fillColor: 'orange',
+                fillOpacity: 0.4
+            }).addTo(map)
+              .bindPopup(`💥 ${asteroid.name} упал здесь!\nЭнергия удара: ${asteroid.impact_energy_mt} Мт`)
+              .openPopup();
+
+            // Можно добавить эффект “взрыва” через анимированный маркер
+            const explosion = L.circleMarker(end, {
+                radius: 10,
+                color: 'yellow',
+                fillColor: 'red',
+                fillOpacity: 0.8
+            }).addTo(map);
+
+            let explodeStep = 0;
+            const explodeInterval = setInterval(() => {
+                explodeStep++;
+                explosion.setRadius(10 + explodeStep * 5);
+                explosion.setStyle({ fillOpacity: Math.max(0, 0.8 - explodeStep * 0.1) });
+                if (explodeStep >= 8) {
+                    clearInterval(explodeInterval);
+                    map.removeLayer(explosion);
+                }
+            }, 50);
+        }
+    }, 50);
+});
