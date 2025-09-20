@@ -1,32 +1,36 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ChatCore</title>
-  <link rel="stylesheet" href="style.css" />
-  <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
+    <meta charset="UTF-8">
+    <title>Meteor Madness</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map { height: 600px; width: 100%; margin-top: 10px; }
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        select, input, button { margin: 5px; padding: 5px; font-size: 16px; }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>Mstore Chat</h1>
-    <button id="btnUser">Я пользователь</button>
-    <button id="btnAdmin">Я админ</button>
-  </header>
 
-  <main id="chatArea" class="hidden">
-    <div id="chatMessages" class="chat-messages"></div>
+<h1>Meteor Madness 🌍💥</h1>
 
-    <form id="messageForm">
-      <input type="text" id="messageInput" placeholder="Введите сообщение..." autocomplete="off" required />
-      <button type="submit">Отправить</button>
-    </form>
-  </main>
+<div>
+    <label for="asteroidSelect">Выберите астероид:</label>
+    <select id="asteroidSelect">
+        <option value="">-- выберите --</option>
+    </select>
 
-  <script src="script.js"></script>
+    <label for="destructionRadius">Радиус разрушений (км):</label>
+    <input type="number" id="destructionRadius" value="10" min="1" max="500">
+
+    <button id="fallBtn">Запустить падение</button>
+</div>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="script.js"></script>
+
 </body>
 </html>
-
